@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C?ng ??ng JLPT 2026 & Gia s? t? do</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Tuy ch?nh thanh cu?n cho khung chat */
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 6px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+            border-radius: 4px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background: #c1c1c1; 
+            border-radius: 4px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8; 
+        }
+        
+        /* Hi?u ?ng m??t ma cho modal va toast */
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-gray-800 font-sans min-h-screen pb-10">
+
+    <!-- Header -->
+    <header class="bg-red-600 text-white shadow-md py-4">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                <h1 class="text-2xl font-bold tracking-wide">JLPT 07/2026 HUB</h1>
+            </div>
+            <div class="text-right">
+                <p class="text-sm text-red-100 uppercase tracking-wider font-semibold">Hom nay</p>
+                <p id="current-date" class="text-lg font-bold">--/--/----</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 mt-8 flex flex-col gap-8">
+        
+        <!-- Section: ??m ng??c & ?i?m danh -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            <!-- ??m ng??c -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col items-center justify-center text-center">
+                <h2 class="text-xl font-bold text-slate-700 mb-2">??m ng??c ??n JLPT (06/07/2026 - 07:00 AM)</h2>
+                <p class="text-slate-500 mb-6">Th?i gian khong ch? ??i ai. Hay c? g?ng h?t s?c!</p>
+                
+                <div class="flex gap-2 sm:gap-4 justify-center">
+                    <div class="bg-slate-100 rounded-lg p-3 sm:p-4 w-20 sm:w-24 border border-slate-200">
+                        <span id="cd-days" class="block text-3xl sm:text-4xl font-bold text-red-600">00</span>
+                        <span class="text-xs sm:text-sm text-slate-500 font-medium uppercase mt-1 block">Ngay</span>
+                    </div>
+                    <div class="bg-slate-100 rounded-lg p-3 sm:p-4 w-20 sm:w-24 border border-slate-200">
+                        <span id="cd-hours" class="block text-3xl sm:text-4xl font-bold text-slate-800">00</span>
+                        <span class="text-xs sm:text-sm text-slate-500 font-medium uppercase mt-1 block">Gi?</span>
+                    </div>
+                    <div class="bg-slate-100 rounded-lg p-3 sm:p-4 w-20 sm:w-24 border border-slate-200">
+                        <span id="cd-mins" class="block text-3xl sm:text-4xl font-bold text-slate-800">00</span>
+                        <span class="text-xs sm:text-sm text-slate-500 font-medium uppercase mt-1 block">Phut</span>
+                    </div>
+                    <div class="bg-slate-100 rounded-lg p-3 sm:p-4 w-20 sm:w-24 border border-slate-200">
+                        <span id="cd-secs" class="block text-3xl sm:text-4xl font-bold text-red-600">00</span>
+                        <span class="text-xs sm:text-sm text-slate-500 font-medium uppercase mt-1 block">Giay</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ?i?m danh -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-slate-700">?i?m danh h?c t?p hom nay</h2>
+                    <span class="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Tr?c tuy?n
+                    </span>
+                </div>
+                <p class="text-slate-500 text-sm mb-4">B?m vao trinh ?? b?n ?ang h?c ?? ghi nh?n n? l?c ngay hom nay.</p>
+                
+                <div id="attendance-container" class="grid grid-cols-5 gap-2 sm:gap-3">
+                    <!-- Javascript will render buttons here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Gia s? t? do & Chat -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Danh sach ng??i d?y t? do -->
+            <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col h-[600px]">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-slate-700">Gia s? / Chuyen gia t? do</h2>
+                    <button class="text-sm text-blue-600 font-medium hover:underline">??ng ky lam ng??i d?y</button>
+                </div>
+                <p class="text-slate-500 text-sm mb-4">C?n luy?n ?am tho?i ho?c gi?i thich c?n k?? Lien h? ngay cac chuyen gia ?ang r?nh.</p>
+                
+                <div id="tutors-container" class="flex-1 overflow-y-auto scrollbar-thin pr-2 space-y-4">
+                    <!-- Javascript will render tutors here -->
+                </div>
+            </div>
+
+            <!-- Khung Chat -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-0 flex flex-col h-[600px] overflow-hidden">
+                <div class="bg-slate-100 p-4 border-b border-slate-200">
+                    <h2 class="font-bold text-slate-700 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"></path></svg>
+                        Phong Tranh Lu?n & H?i ?ap
+                    </h2>
+                </div>
+                
+                <div id="chat-messages" class="flex-1 p-4 overflow-y-auto scrollbar-thin flex flex-col gap-3 bg-slate-50/50">
+                    <!-- Messages will appear here -->
+                </div>
+                
+                <div class="p-3 bg-white border-t border-slate-200">
+                    <form id="chat-form" class="flex gap-2">
+                        <input type="text" id="chat-input" class="flex-1 border border-slate-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="Nh?p cau h?i ho?c tin nh?n..." required autocomplete="off">
+                        <button type="submit" class="bg-blue-600 text-white rounded-full p-2 w-10 h-10 flex items-center justify-center hover:bg-blue-700 transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Modal Momo Payment -->
+    <div id="payment-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl fade-in relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h3 class="text-xl font-bold text-slate-800 mb-1" id="modal-tutor-name">Ten ng??i d?y</h3>
+            <p class="text-sm text-slate-500 mb-6" id="modal-tutor-skill">K? n?ng</p>
+            
+            <div class="bg-pink-50 rounded-xl p-4 border border-pink-100 flex flex-col items-center text-center">
+                <img src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png" alt="Momo Logo" class="h-8 mb-4">
+                <p class="text-slate-700 font-medium mb-1">Quet ma ?? thanh toan h?c phi</p>
+                <p class="text-lg font-bold text-pink-600 mb-4" id="modal-tutor-price">0?</p>
+                
+                <!-- Fake QR Code Container -->
+                <div class="w-48 h-48 bg-white p-2 rounded-xl shadow-sm border border-slate-200 flex items-center justify-center mb-4">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=MoMo_Thanh_Toan_Gia_Su" alt="Ma QR Momo" class="w-full h-full opacity-80" />
+                </div>
+                
+                <div class="w-full bg-white rounded-lg border border-slate-200 p-3 flex justify-between items-center">
+                    <div class="text-left">
+                        <p class="text-xs text-slate-500">S? ?i?n tho?i Momo</p>
+                        <p class="font-bold text-slate-800" id="modal-tutor-phone">090xxxxxxx</p>
+                    </div>
+                    <button onclick="copyPhone()" class="text-blue-600 bg-blue-50 p-2 rounded-md hover:bg-blue-100 text-sm font-medium transition">Sao chep</button>
+                </div>
+            </div>
+            
+            <div class="mt-6 flex gap-3">
+                <button onclick="openChatWithTutor()" class="flex-1 bg-blue-600 text-white rounded-lg py-3 font-medium hover:bg-blue-700 transition flex justify-center items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                    Nh?n tin tr?c ti?p
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification (Custom Alert) -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-800 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-3">
+        <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+        <span id="toast-message">Thong bao</span>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // === 1. X? LY NGAY THANG VA ??M NG??C ===
+        const targetDate = new Date('2026-07-06T07:00:00').getTime();
+        
+        function updateDateAndTimer() {
+            const now = new Date();
+            
+            // Hi?n th? ngay hom nay
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('current-date').innerText = now.toLocaleDateString('vi-VN', options);
+
+            // Tinh toan th?i gian ??m ng??c
+            const distance = targetDate - now.getTime();
+
+            if (distance < 0) {
+                document.getElementById('cd-days').innerText = "00";
+                document.getElementById('cd-hours').innerText = "00";
+                document.getElementById('cd-mins').innerText = "00";
+                document.getElementById('cd-secs').innerText = "00";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById('cd-days').innerText = days.toString().padStart(2, '0');
+            document.getElementById('cd-hours').innerText = hours.toString().padStart(2, '0');
+            document.getElementById('cd-mins').innerText = minutes.toString().padStart(2, '0');
+            document.getElementById('cd-secs').innerText = seconds.toString().padStart(2, '0');
+        }
+
+        setInterval(updateDateAndTimer, 1000);
+        updateDateAndTimer();
+
+        // === 2. X? LY ?I?M DANH ===
+        // D? li?u mo ph?ng
+        let attendanceData = {
+            'N5': { count: 124, color: 'bg-emerald-100 hover:bg-emerald-200 border-emerald-300 text-emerald-800' },
+            'N4': { count: 89, color: 'bg-blue-100 hover:bg-blue-200 border-blue-300 text-blue-800' },
+            'N3': { count: 256, color: 'bg-indigo-100 hover:bg-indigo-200 border-indigo-300 text-indigo-800' },
+            'N2': { count: 142, color: 'bg-purple-100 hover:bg-purple-200 border-purple-300 text-purple-800' },
+            'N1': { count: 35, color: 'bg-rose-100 hover:bg-rose-200 border-rose-300 text-rose-800' }
+        };
+
+        function renderAttendance() {
+            const container = document.getElementById('attendance-container');
+            container.innerHTML = '';
+            
+            Object.keys(attendanceData).forEach(level => {
+                const data = attendanceData[level];
+                const btn = document.createElement('button');
+                btn.className = `flex flex-col items-center justify-center p-3 rounded-xl border transition-all duration-200 ${data.color}`;
+                btn.onclick = () => handleCheckIn(level);
+                
+                btn.innerHTML = `
+                    <span class="text-xl font-bold mb-1">${level}</span>
+                    <div class="bg-white/60 px-2 py-0.5 rounded text-xs font-semibold">
+                        <span id="count-${level}">${data.count}</span> ng??i
+                    </div>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        function handleCheckIn(level) {
+            attendanceData[level].count += 1;
+            document.getElementById(`count-${level}`).innerText = attendanceData[level].count;
+            showToast(`B?n ?a ?i?m danh h?c ${level} thanh cong! C? len nhe!`);
+        }
+
+        // === 3. X? LY GIA S? T? DO & THANH TOAN ===
+        const tutors = [
+            { id: 1, name: "Th?y Satoshi Nakagawa", level: "B?n x?", skill: "Chuyen ?am tho?i, ch?nh phat am t? nhien", status: "r?nh", price: "250.000? / 1 ti?ng", phone: "0901234567", avatar: "https://ui-avatars.com/api/?name=Satoshi&background=0D8ABC&color=fff" },
+            { id: 2, name: "Senpai Ng?c Linh", level: "N1", skill: "Gi?i ?? ??c hi?u N2, N1 th?n t?c", status: "b?n", price: "150.000? / 1 ti?ng", phone: "0987654321", avatar: "https://ui-avatars.com/api/?name=Ng?c+Linh&background=E83E8C&color=fff" },
+            { id: 3, name: "Anh Tu?n IT", level: "N2", skill: "Ti?ng Nh?t IT, luy?n ph?ng v?n k? s?", status: "r?nh", price: "200.000? / 1 ti?ng", phone: "0911223344", avatar: "https://ui-avatars.com/api/?name=Tu?n&background=198754&color=fff" },
+            { id: 4, name: "Co Minh H?ng", level: "N1", skill: "Ch?a bai vi?t, on thi EJU", status: "r?nh", price: "300.000? / 1 ti?ng", phone: "0933445566", avatar: "https://ui-avatars.com/api/?name=Minh+H?ng&background=FD7E14&color=fff" }
+        ];
+
+        let currentTutorPhone = "";
+
+        function renderTutors() {
+            const container = document.getElementById('tutors-container');
+            container.innerHTML = '';
+            
+            tutors.forEach(tutor => {
+                const isFree = tutor.status === 'r?nh';
+                const statusBadge = isFree 
+                    ? `<span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full font-medium flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>?ang r?nh</span>`
+                    : `<span class="bg-slate-100 text-slate-500 text-xs px-2 py-1 rounded-full font-medium flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>?ang b?n</span>`;
+                
+                const actionBtn = isFree 
+                    ? `<button onclick="openModal(${tutor.id})" class="bg-pink-50 text-pink-600 hover:bg-pink-100 border border-pink-200 px-4 py-2 rounded-lg text-sm font-semibold transition whitespace-nowrap">Thue & Thanh toan</button>`
+                    : `<button disabled class="bg-slate-50 text-slate-400 border border-slate-200 px-4 py-2 rounded-lg text-sm font-semibold cursor-not-allowed whitespace-nowrap">Gia s? b?n</button>`;
+
+                const card = document.createElement('div');
+                card.className = "flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4 border border-slate-200 rounded-xl hover:shadow-md transition bg-white";
+                card.innerHTML = `
+                    <div class="flex items-center gap-4">
+                        <img src="${tutor.avatar}" alt="Avatar" class="w-12 h-12 rounded-full border shadow-sm">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <h3 class="font-bold text-slate-800 text-lg">${tutor.name}</h3>
+                                ${statusBadge}
+                            </div>
+                            <p class="text-sm text-slate-500"><span class="font-semibold text-indigo-600 mr-2">[${tutor.level}]</span> ${tutor.skill}</p>
+                            <p class="text-sm font-medium text-slate-700 mt-1">Phi: ${tutor.price}</p>
+                        </div>
+                    </div>
+                    <div class="w-full sm:w-auto text-right">
+                        ${actionBtn}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Modal x? ly
+        function openModal(tutorId) {
+            const tutor = tutors.find(t => t.id === tutorId);
+            if (!tutor) return;
+            
+            document.getElementById('modal-tutor-name').innerText = tutor.name;
+            document.getElementById('modal-tutor-skill').innerText = tutor.skill;
+            document.getElementById('modal-tutor-price').innerText = tutor.price;
+            document.getElementById('modal-tutor-phone').innerText = tutor.phone;
+            currentTutorPhone = tutor.phone;
+            
+            document.getElementById('payment-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('payment-modal').classList.add('hidden');
+        }
+
+        function copyPhone() {
+            // Do chinh sach iFrame, s? d?ng m?o t?o input ?n ?? copy
+            const tempInput = document.createElement("input");
+            tempInput.value = currentTutorPhone;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+            showToast("?a sao chep s? ?i?n tho?i!");
+        }
+
+        function openChatWithTutor() {
+            closeModal();
+            showToast("?a m? k?t n?i. B?n co th? chat tr?c ti?p v?i ng??i d?y.");
+            const chatInput = document.getElementById('chat-input');
+            chatInput.value = `Chao b?n, minh mu?n ??ng ky h?c. B?n ?ang r?nh ch??`;
+            chatInput.focus();
+        }
+
+        // === 4. X? LY CHAT ===
+        const chatMessages = [
+            { user: "Minh Quan", level: "N4", text: "Ai r?nh check giup minh ng? phap bai 42 Minna v?i ??", time: "09:15" },
+            { user: "H??ng Tra", level: "N2", text: "Minh th?y ?? N2 n?m 2022 kha khoai ph?n bai ??c dai. M?i ng??i co tips gi khong?", time: "10:30" }
+        ];
+
+        function renderChat() {
+            const container = document.getElementById('chat-messages');
+            container.innerHTML = '';
+            
+            chatMessages.forEach(msg => {
+                const isMe = msg.user === "B?n";
+                const alignClass = isMe ? "self-end" : "self-start";
+                const bgClass = isMe ? "bg-blue-600 text-white" : "bg-white border border-slate-200 text-slate-800";
+                const userText = isMe ? "B?n" : `${msg.user} <span class="text-xs ml-1 text-slate-400">(${msg.level})</span>`;
+                
+                const msgDiv = document.createElement('div');
+                msgDiv.className = `max-w-[85%] ${alignClass} flex flex-col gap-1`;
+                msgDiv.innerHTML = `
+                    <span class="text-xs text-slate-500 font-medium ${isMe ? 'text-right' : ''}">${userText}</span>
+                    <div class="px-4 py-2 rounded-2xl ${bgClass} shadow-sm">
+                        <p class="text-sm">${msg.text}</p>
+                    </div>
+                    <span class="text-[10px] text-slate-400 ${isMe ? 'text-right' : ''}">${msg.time}</span>
+                `;
+                container.appendChild(msgDiv);
+            });
+            // T? ??ng cu?n xu?ng cu?i
+            container.scrollTop = container.scrollHeight;
+        }
+
+        document.getElementById('chat-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if(!text) return;
+
+            const now = new Date();
+            const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+            
+            chatMessages.push({ user: "B?n", level: "", text: text, time: timeStr });
+            input.value = '';
+            renderChat();
+            
+            // Tr? l?i t? ??ng ng?u nhien (ch? ?? mo ph?ng)
+            if(text.toLowerCase().includes('??ng ky h?c')) {
+                setTimeout(() => {
+                    chatMessages.push({ user: "H? th?ng", level: "Bot", text: "Tin nh?n ?a ???c g?i ??n gia s?. Vui long ??i trong giay lat...", time: timeStr });
+                    renderChat();
+                }, 1000);
+            }
+        });
+
+        // === TI?N ICH ===
+        let toastTimeout;
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = message;
+            
+            // Reset animation
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            clearTimeout(toastTimeout);
+            
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // ?ong modal khi click ra ngoai
+        document.getElementById('payment-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // Kh?i t?o giao di?n
+        renderAttendance();
+        renderTutors();
+        renderChat();
+
+    </script>
+</body>
+</html>
